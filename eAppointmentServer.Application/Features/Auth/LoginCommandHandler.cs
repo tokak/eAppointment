@@ -15,8 +15,8 @@ namespace eAppointmentServer.Application.Features.Auth
         public async Task<Result<LoginCommandResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             AppUser? appUser =
-                await userManager.Users.FirstOrDefaultAsync(p=>
-                p.UserName == request.UserNameOrEmail || 
+                await userManager.Users.FirstOrDefaultAsync(p =>
+                p.UserName == request.UserNameOrEmail ||
                 p.Email == request.UserNameOrEmail, cancellationToken);
 
             if (appUser is null)
@@ -28,7 +28,7 @@ namespace eAppointmentServer.Application.Features.Auth
             if (!isPasswordCorrect)
                 return Result<LoginCommandResponse>.Failure("Password is wrong");
 
-            string token = jwtProvider.CreateToken(appUser);
+            string token = await jwtProvider.CreateTokenAsync(appUser);
             LoginCommandResponse response = new(token);
             return Result<LoginCommandResponse>.Succeed(response);
         }
